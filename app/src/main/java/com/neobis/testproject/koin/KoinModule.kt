@@ -3,30 +3,41 @@ package com.neobis.testproject.koin
 import android.content.Context
 import com.neobis.testproject.Constants
 import com.neobis.testproject.app.fragments.ProductViewModel
+import com.neobis.testproject.app.fragments.SavedViewModel
 import com.neobis.testproject.data.retrofit.ProductAPI
 import com.neobis.testproject.data.repository.MainRepository
+import com.neobis.testproject.data.room.MyRoomDatabase
+import com.neobis.testproject.data.room.ProductDao
+import com.neobis.testproject.data.room.ProvideRoom
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import kotlin.math.sin
 
 val retrofitModule = module {
 
     single { getOkHttp() }
     single { getRetrofitInstance(okHttpClient = get()) }
     single { getProductApi(retrofit = get()) }
-    factory { MainRepository(productAPI = get()) }
+    factory { MainRepository(productAPI = get(), productDao = get()) }
+    single { ProvideRoom(context = androidContext()) }
+    single { getProductDao(database = get()) }
 
 }
 
 val viewModules = module {
     viewModel { ProductViewModel(repository = get()) }
+    viewModel { SavedViewModel(repository = get()) }
 }
 
-
+fun getProductDao(database: ProvideRoom):ProductDao{
+    return database.provide().productDao()
+}
 
 fun getOkHttp(): OkHttpClient {
     return OkHttpClient.Builder()

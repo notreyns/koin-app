@@ -27,4 +27,10 @@ class ProductViewModel(private val repository: MainRepository) : ViewModel(), De
             }
         }
     }
+
+    fun insertData(model:ProductItem){
+        viewModelScope.launch {
+            repository.insertData(model)
+        }
+    }
 }

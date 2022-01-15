@@ -3,10 +3,11 @@ package com.neobis.testproject.app.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.neobis.testproject.app.utils.RecyclerItemListener
 import com.neobis.testproject.data.model.ProductItem
 import com.neobis.testproject.databinding.ProductItemBinding
 
-class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class RecyclerAdapter(private val clicker:RecyclerItemListener?) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     private var list = listOf<ProductItem>()
 
@@ -27,7 +28,11 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setProduct(list[position])
+        val product = list[position]
+        holder.setProduct(product)
+        holder.itemView.setOnClickListener {
+            clicker?.itemViewClicker(product)
+        }
     }
 
     override fun getItemCount(): Int {
